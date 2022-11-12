@@ -1,0 +1,211 @@
+﻿@{
+    ViewData["Title"] = "Empresa";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Empresas</h1>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <button id="btnInserir" class="btn btn-primary">Novo</button>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="divLista">
+                <table id="tbEmpresa" class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="divCadastro" class="esconder">
+                <div class="col-12 mb-3">
+                    <input id="txtId" type="hidden" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtNome" type="text" class="form-control" placeholder="Nome" />
+                </div>
+                <div class="col-12 text-center">
+                    <button id="btnSalvar" class="btn btn-primary">Salvar</button>
+                    <button id="btnFechar" onclick="fechar()" class="btn btn-danger">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Header {
+    <style>
+        .esconder {
+            display: none;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var url = 'https://localhost:7037/api/';
+
+        function deletarEmpresa(id) {
+            $.ajax({
+                type: "DELETE",
+                url: url + 'empresa?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarEmpresa();
+                    }
+                    else {
+                        alert(jsonResult.Mensagem);
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function editarEmpresa(id) {
+            $.ajax({
+                type: "GET",
+                url: url + 'empresa?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        $('#divCadastro').removeClass('esconder');
+
+                        var obj = jsonResult.resultado;
+
+                        $('#txtId').val(obj.id);
+                        $('#txtNome').val(obj.nome);
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function listarEmpresa() {
+            $.ajax({
+                type: "GET",
+                url: url + 'empresa/listar',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (jsonResult) {
+                    if(jsonResult.status) {
+                        var lista = jsonResult.resultado;
+                        var botaoEditar = '';
+                        var botaoDeletar = '';
+
+                        $('#tbEmpresa')
+                            .find('tbody')
+                            .empty();
+
+                        $.each(lista, function (index, value) {
+                            botaoEditar = ' <button class="btn btn-primary" onclick="editarEmpresa(' + value.id + ')">Editar</button> ';
+                            botaoDeletar = ' <button class="btn btn-danger" onclick="deletarEmpresa(' + value.id + ')">Deletar</button> ';
+
+                            $('#tbEmpresa')
+                                .find('tbody')
+                                .append('<tr>')
+                                .append($('<td>').append(value.id))
+                                .append($('<td>').append(value.nome))
+                                .append($('<td>').append(botaoEditar + botaoDeletar));
+                        });
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+
+        }
+
+        function adicionarEmpresa() {
+            $('#divCadastro').removeClass('esconder');
+            $('#txtId').val('0');
+        }
+
+        function inserir() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Nome: $('#txtNome').val(),
+                Ativo: true
+            };
+
+            $.ajax({
+                type: "POST",
+                url: url + 'empresa',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarEmpresa();
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function alterar() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Nome: $('#txtNome').val(),
+                Ativo: true
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: url + 'empresa',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarEmpresa();
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function salvar() {
+            var id = $('#txtId').val();
+
+            if(id == '0') {
+                inserir();
+            }
+            else {
+                alterar();
+            }
+        }
+
+        function fechar() {
+            $('#divCadastro').addClass('esconder');
+        }
+
+        $(function() {
+            listarEmpresa();
+
+            $('#btnInserir').click(function() { adicionarEmpresa(); });
+            $('#btnSalvar').click(function() { salvar(); });
+        });
+    </script>
+}

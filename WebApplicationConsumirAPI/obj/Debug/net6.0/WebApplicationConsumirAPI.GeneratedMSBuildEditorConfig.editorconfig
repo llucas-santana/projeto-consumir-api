@@ -1,0 +1,80 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = WebApplicationConsumirAPI
+build_property.RootNamespace = WebApplicationConsumirAPI
+build_property.ProjectDir = C:\Users\lucas\OneDrive\Documentos\WebApplicationConsumirAPI\WebApplicationConsumirAPI\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\lucas\OneDrive\Documentos\WebApplicationConsumirAPI\WebApplicationConsumirAPI
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Cliente/Cliente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2xpZW50ZVxDbGllbnRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Empresa/Empresa.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1wcmVzYVxFbXByZXNhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Filme/Filme.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmlsbWVcRmlsbWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Funcionario/Funcionario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRnVuY2lvbmFyaW9cRnVuY2lvbmFyaW8uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Ingresso/Ingresso.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5ncmVzc29cSW5ncmVzc28uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Login/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cTG9naW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Sala/Sala.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FsYVxTYWxhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Venda/DetalhesDoPedido.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVuZGFcRGV0YWxoZXNEb1BlZGlkby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Venda/Venda.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVuZGFcVmVuZGEuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-32nkupolm8
+
+[C:/Users/lucas/OneDrive/Documentos/WebApplicationConsumirAPI/WebApplicationConsumirAPI/Views/Shared/_LayoutSite.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRTaXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = b-i7a3zgaunj

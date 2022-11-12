@@ -1,0 +1,247 @@
+﻿@{
+    ViewData["Title"] = "Cliente";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Clientes</h1>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <button id="btnInserir" type="button" class="btn btn-primary">Novo</button>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div id="divLista">
+                <table id="tbCliente" class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Login</th>
+                            <th>Senha</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="divCadastro" class="esconder">
+                <div class="col-12 mb-3">
+                    <input id="txtId" type="hidden" />
+                    <input id="txtIdPessoa" type="hidden" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtNome" type="text" class="form-control" placeholder="Nome" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtCpf" type="text" class="form-control" placeholder="CPF" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtLogin" type="text" class="form-control" placeholder="Login" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtSenha" type="password" class="form-control" placeholder="Senha" />
+                </div>
+                <div class="col-12 text-center">
+                    <button id="btnSalvar" type="button" class="btn btn-success">Salvar</button>
+                    <button id="btnFechar" type="button" onclick="fechar()" class="btn btn-danger">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Header {
+    <style>
+        .esconder {
+            display: none;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var url = 'https://localhost:7037/api/';
+
+        function deletarCliente(id) {
+            $.ajax({
+                type: "DELETE",
+                url: url + 'cliente?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarCliente();
+                    } else {
+                        alert(jsonResult.Mensagem);
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function editarCliente(id) {
+            $.ajax({
+                type: "GET",
+                url: url + 'cliente?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        $('#divCadastro').removeClass('esconder');
+
+                        var obj = jsonResult.resultado;
+
+                        $('#txtId').val(obj.id);
+                        $('#txtIdPessoa').val(obj.idPessoa);
+                        $('#txtNome').val(obj.idPessoaNavigation.nome);
+                        $('#txtCpf').val(obj.idPessoaNavigation.cpf);
+                        $('#txtLogin').val(obj.login);
+                        $('#txtSenha').val(obj.senha);
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            }); 
+        }
+
+        function listarCliente() {
+            $.ajax({
+                type: "GET",
+                url: url + 'cliente/listar',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        var lista = jsonResult.resultado;
+                        var botaoEditar = '';
+                        var botaoDeletar = '';
+
+                        $('#tbCliente')
+                            .find('tbody')
+                            .empty();
+
+                        $.each(lista, function(index, value) {
+                            botaoEditar = '<button type="button" class="btn btn-warning" onclick="editarCliente(' + value.id + ')">Editar</button>';
+                            botaoDeletar = '<button type="button" class="btn btn-danger" onclick="deletarCliente(' + value.id + ')">Deletar</button>';
+
+                            $('#tbCliente')
+                                .find('tbody')
+                                .append('<tr>')
+                                .append($('<td>').append(value.id))
+                                .append($('<td>').append(value.idPessoaNavigation.nome))
+                                .append($('<td>').append(value.idPessoaNavigation.cpf))
+                                .append($('<td>').append(value.login))
+                                .append($('<td>').append(value.senha))
+                                .append($('<td>').append(botaoEditar + botaoDeletar));
+                        });
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function adicionarCliente() {
+            $('#divCadastro').removeClass('esconder');
+            $('#txtId').val('0');
+            $('#txtIdPessoa').val('0');
+        }
+
+        function inserir() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Login: $('#txtLogin').val(),
+                Senha: $('#txtSenha').val(),
+                IdPessoa: parseInt($('#txtIdPessoa').val()),
+                Ativo: true
+            };
+
+            var objPessoa = {
+                Id: parseInt($('#txtIdPessoa').val()),
+                Nome: $('#txtNome').val(),
+                Cpf: $('#txtCpf').val()
+            };
+
+            obj.IdPessoaNavigation = objPessoa;
+
+            $.ajax({
+                type: "POST",
+                url: url + 'cliente',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarCliente();
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function alterar() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Login: $('#txtLogin').val(),
+                Senha: $('#txtSenha').val(),
+                IdPessoa: parseInt($('#txtIdPessoa').val()),
+                Ativo: true
+            };
+
+            var objPessoa = {
+                Id: parseInt($('#txtIdPessoa').val()),
+                Nome: $('#txtNome').val(),
+                Cpf: $('#txtCpf').val()
+            };
+
+            obj.IdPessoaNavigation = objPessoa;
+
+            $.ajax({
+                type: "PUT",
+                url: url + 'cliente',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarCliente();
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function salvar() {
+            var id = $('#txtId').val();
+
+            if(id == '0') {
+                inserir();
+            } else {
+                alterar();
+            }
+        }
+
+        function fechar() {
+            $('#divCadastro').addClass('esconder');
+        }
+
+        $(function() {
+            listarCliente();
+            $('#btnInserir').click(function() { adicionarCliente(); });
+            $('#btnSalvar').click(function() { salvar(); });
+        });
+    </script>
+}

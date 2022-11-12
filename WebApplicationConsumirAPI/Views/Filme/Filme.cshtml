@@ -1,0 +1,364 @@
+﻿@{
+    ViewData["Title"] = "Filme";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Filmes</h1>
+</div>
+
+<div class="container-fluid text-center">
+    <div class="row">
+        <div class="col-12">
+            <button id="btnInserir" class="btn btn-primary">Novo</button>
+        </div>
+    </div>
+    <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Primeiro</th>
+      <th scope="col">Último</th>
+      <th scope="col">Nickname</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Jacob</td>
+      <td>Thornton</td>
+      <td>@fat</td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>Larry</td>
+      <td>the Bird</td>
+      <td>@twitter</td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="table">
+  <thead class="thead-light">
+    <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Empresa</th>
+                <th scope="col">Descricao</th>
+                <th scope="col">Imagem</th>
+                <th scope="col">Duração</th>
+                <th scope="col">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="divLista">
+                <table id="tbFilme" class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Empresa</th>
+                            <th>Descricao</th>
+                            <th>Imagem</th>
+                            <th>Duração</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="divCadastro" class="esconder">
+                <div class="col-12 mb-3">
+                    <input id="txtId" type="hidden" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtNome" type="text" class="form-control" placeholder="Nome" />
+                </div>
+                <div class="col-12 mb-3">
+                    <select id="cbEmpresa" class="form-select" aria-label="Default select example">
+                        <option selected value="0">Selecione</option>
+                    </select>
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtDescricao" type="text" class="form-control" placeholder="Descrição" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="imagem" type="file" class="form-control" />
+                </div>
+                <div class="col-12 mb-3">
+                    <button id="btnSalvarImagem" class="btn btn-primary">Adicionar</button>
+                </div>
+                <div class="col-12 mb-3">
+                    <img src="#" id="imgFilme" width="150" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtDuracao" type="text" class="form-control" placeholder="Duração em minutos" />
+                </div>
+                <div class="col-12 text-center">
+                    <button id="btnSalvar" class="btn btn-success">Salvar</button>
+                    <button id="btnFechar" onclick="fechar()" class="btn btn-danger">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Header {
+    <style>
+        .esconder {
+            display: none;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var urlImagem = 'https://localhost:7037/api/filme/obterImagem?arquivo=';
+
+        var url = 'https://localhost:7037/api/';
+
+        var imagemSelecionada = '';
+
+        function carregarImagem() {
+            $('#imgFilme').attr('src', urlImagem + imagemSelecionada);
+        }
+
+        function carregarEmpresa() {
+            $.ajax({
+                type: "GET",
+                url: url + 'empresa/listar',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        var lista = jsonResult.resultado;
+
+                        $.each(lista, function(index, obj) {
+                            $('#cbEmpresa')
+                                .append($('<option>', {
+                                    text: obj.nome,
+                                    value: obj.id
+                                }));
+                        });
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function salvarImagem() {
+            var url = 'https://localhost:7037/api/filme/upload';
+            var fd = new FormData();
+
+            fd.append('files', $('#imagem')[0].files[0]);
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                processData: false,
+                contentType: false,
+                data: fd,
+                success: function(result) {
+                    imagemSelecionada = result;
+                    carregarImagem();
+                },
+                failure: function(response) {
+                    limparDados();
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function deletarFilme(id) {
+            $.ajax({
+                type: "DELETE",
+                url: url + 'filme?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarFilme();
+                    }
+                    else {
+                        alert(jsonResult.Mensagem);
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function editarFilme(id) {
+            $.ajax({
+                type: "GET",
+                url: url + 'filme?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        $('#divCadastro').removeClass('esconder');
+
+                        var obj = jsonResult.resultado;
+
+                        $('#txtId').val(obj.id);
+                        $('#txtNome').val(obj.nome);
+                        $('#cbEmpresa').val(obj.idEmpresa);
+                        $('#txtDescricao').val(obj.descricao);
+                        imagemSelecionada = obj.imagem;
+                        $('#txtDuracao').val(obj.duracaoMinutos);
+                        carregarImagem();
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function listarFilme() {
+            $.ajax({
+                type: "GET",
+                url: url + 'filme/listar',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        var lista = jsonResult.resultado;
+                        var botaoEditar = '';
+                        var botaoDeletar = '';
+                        var imagemTabela = '';
+
+                        $('#tbFilme')
+                            .find('tbody')
+                            .empty();
+
+                        $.each(lista, function(index, value) {
+                            botaoEditar = '<button class="btn btn-primary" onclick="editarFilme(' + value.id + ')">Editar</button>';
+                            botaoDeletar = '<button class="btn btn-danger" onclick="deletarFilme(' + value.id + ')">Deletar</button>';
+
+                            imagemTabela = '';
+
+                            if(value.imagem != '') {
+                                imagemTabela = '<img src="' + urlImagem + value.imagem + '" height="80px">';
+                            }
+
+                            $('#tbFilme')
+                                .find('tbody')
+                                .append('<tr>')
+                                .append($('<td>').append(value.id))
+                                .append($('<td>').append(value.nome))
+                                .append($('<td>').append(value.idEmpresa))
+                                .append($('<td>').append(value.descricao))
+                                .append($('<td>').append(imagemTabela))
+                                .append($('<td>').append(value.duracaoMinutos))
+                                .append($('<td>').append(botaoEditar + botaoDeletar))
+                        });
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+
+        }
+
+        function adicionarFilme() {
+            $('#divCadastro').removeClass('esconder');
+            $('#txtId').val('0');
+        }
+
+        function inserir() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Nome: $('#txtNome').val(),
+                IdEmpresa: $('#cbEmpresa').val(),
+                Descricao: $('#txtDescricao').val(),
+                Imagem: imagemSelecionada,
+                DuracaoMinutos: parseInt($('#txtDuracao').val()),
+                Ativo: true
+            };
+
+            $.ajax({
+                type: "POST",
+                url: url + 'filme',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarFilme();
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function alterar() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Nome: $('#txtNome').val(),
+                IdEmpresa: $('#cbEmpresa').val(),
+                Descricao: $('#txtDescricao').val(),
+                Imagem: imagemSelecionada,
+                DuracaoMinutos: parseInt($('#txtDuracao').val()),
+                Ativo: true
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: url + 'filme',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarFilme();
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+
+        }
+
+        function salvar() {
+            var id = $('#txtId').val();
+
+            if(id == '0') {
+                inserir();
+            }
+            else {
+                alterar();
+            }
+        }
+
+        function fechar() {
+            $('#divCadastro').addClass('esconder');
+        }
+
+        $(function() {
+            listarFilme();
+            carregarEmpresa();
+
+            $('#btnInserir').click(function() { adicionarFilme(); });
+            $('#btnSalvar').click(function() { salvar(); });
+            $('#btnSalvarImagem').click(function() { salvarImagem(); });
+        });
+    </script>
+}

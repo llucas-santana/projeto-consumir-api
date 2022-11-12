@@ -1,0 +1,219 @@
+﻿@{
+    ViewData["Title"] = "Sala";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Sala</h1>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <button id="btnInserir" class="btn btn-primary">Novo</button>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="divLista">
+                <table id="tbSala" class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nome</th>
+                            <th>Quantidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="divCadastro" class="esconder">
+                <div class="col-12 mb-3">
+                    <input id="txtId" type="hidden" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtNome" type="text" class="form-control" placeholder="Nome" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtQuantidade" type="number" class="form-control" placeholder="Quantidade" />
+                </div>
+                <div class="col-12 text-center">
+                    <button id="btnSalvar" class="btn btn-primary">Salvar</button>
+                    <button id="btnFechar" onclick="fechar()" class="btn btn-danger">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Header {
+    <style>
+        .esconder {
+            display: none;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var url = 'https://localhost:7037/api/';
+
+        function deletarSala(id) {
+            $.ajax({
+                type: "DELETE",
+                url: url + 'sala?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(jsonResult) {
+                    if(jsonResult.status) {
+                        listarSala();
+                    }
+                    else {
+                        alert(jsonResult.Mensagem);
+                    }
+                },
+                failure: function(response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function editarSala(id) {
+            $.ajax({
+                type: "GET",
+                url: url + 'sala?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        $('#divCadastro').removeClass('esconder');
+
+                        var obj = jsonResult.resultado;
+
+                        $('#txtId').val(obj.id);
+                        $('#txtNome').val(obj.nome);
+                        $('#txtQuantidade').val(obj.quantidade);
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function listarSala() {
+            $.ajax({
+                type: "GET",
+                url: url + 'sala/listar',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        var lista = jsonResult.resultado;
+                        var botaoEditar = '';
+                        var botaoDeletar = '';
+
+                        $('#tbSala')
+                            .find('tbody')
+                            .empty();
+
+                        $.each(lista, function (index, value) {
+                            botaoEditar = ' <button class="btn btn-primary" onclick="editarSala(' + value.id + ')">Editar</button> ';
+                            botaoDeletar = ' <button class="btn btn-danger" onclick="deletarSala(' + value.id + ')">Deletar</button> ';
+
+                            $('#tbSala')
+                                .find('tbody')
+                                .append('<tr>')
+                                .append($('<td>').append(value.id))
+                                .append($('<td>').append(value.nome))
+                                .append($('<td>').append(value.quantidade))
+                                .append($('<td>').append(botaoEditar + botaoDeletar));
+                        });
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+
+        }
+
+        function adicionarSala() {
+            $('#divCadastro').removeClass('esconder');
+            $('#txtId').val('0');
+        }
+
+        function inserir() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Nome: $('#txtNome').val(),
+                Ativo: true,
+                Quantidade: parseInt($('#txtQuantidade').val())
+            };
+
+            $.ajax({
+                type: "POST",
+                url: url + 'sala',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        listarSala();
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function alterar() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                Nome: $('#txtNome').val(),
+                Ativo: true,
+                Quantidade: parseInt($('#txtQuantidade').val())
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: url + 'sala',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        listarSala();
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function salvar() {
+            var id = $('#txtId').val();
+
+            if (id == '0') {
+                inserir();
+            }
+            else {
+                alterar();
+            }
+        }
+
+        function fechar() {
+            $('#divCadastro').addClass('esconder');
+        }
+
+        $(function () {
+            listarSala();
+
+            $('#btnInserir').click(function () { adicionarSala(); });
+            $('#btnSalvar').click(function () { salvar(); });
+        });
+    </script>
+}

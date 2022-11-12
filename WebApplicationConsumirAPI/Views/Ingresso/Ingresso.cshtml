@@ -1,0 +1,260 @@
+﻿@{
+    ViewData["Title"] = "Ingresso";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Ingressos</h1>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <button id="btnInserir" type="button" class="btn btn-primary">Novo</button>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div id="table-light table-bordered table-striped">
+                <table id="tbIngresso" class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Filme</th>
+                            <th>Sala</th>
+                            <th>Valor</th>
+                            <th>Data Início</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="divCadastro" class="esconder">
+                <div class="col-12 mb-3">
+                    <input id="txtId" type="hidden" />
+                </div>
+                <div class="col-12 mb-3">
+                    <select id="cbFilme" class="form-select" aria-label="Default select example">
+                        <option selected value="0">Selecione</option>
+                    </select>
+                </div>
+                <div class="col-12 mb-3">
+                    <select id="cbSala" class="form-select" aria-label="Default select example">
+                        <option selected value="0">Selecione</option>
+                    </select>
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtValor" class="form-control" placeholder="Valor" />
+                </div>
+                <div class="col-12 mb-3">
+                    <input id="txtData" type="date" class="form-control" />
+                </div>
+                <div class="col-12 text-center">
+                    <button id="btnSalvar" type="button" class="btn btn-success">Salvar</button>
+                    <button id="btnFechar" type="button" onclick="fechar()" class="btn btn-danger">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Header {
+    <style>
+        .esconder {
+            display: none;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var url = 'https://localhost:7037/api/';
+
+        function carregarFilme() {
+            $.ajax({
+                type: "GET",
+                url: url + 'filme/listar',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        var lista = jsonResult.resultado;
+
+                        $.each(lista, function (index, obj) {
+                            $('#cbFilme')
+                                .append($('<option>', {
+                                    text: obj.nome,
+                                    value: obj.id
+                                }));
+                        });
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function deletarIngresso(id) {
+            $.ajax({
+                type: "DELETE",
+                url: url + 'ingresso?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        listarIngresso();
+                    } else {
+                        alert(jsonResult.Mensagem);
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function editarIngresso(id) {
+            $.ajax({
+                type: "GET",
+                url: url + 'ingresso?id=' + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        $('#divCadastro').removeClass('esconder');
+
+                        var obj = jsonResult.resultado;
+
+                        $('#txtId').val(obj.id);
+                        $('#cbFilme').val(obj.idFilme);
+                        $('#cbSala').val(obj.idSala);
+                        $('#txtValor').val(obj.valor);
+                        $('#txtData').val(obj.data);
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function listarIngresso() {
+            $.ajax({
+                type: "GET",
+                url: url + 'ingresso/listar',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        var lista = jsonResult.resultado;
+                        var botaoEditar = '';
+                        var botaoDeletar = '';
+
+                        $('#tbIngresso')
+                            .find('tbody')
+                            .empty();
+
+                        $.each(lista, function (index, value) {
+                            botaoEditar = ' <button type="button" class="btn btn-warning" onclick="editarIngresso(' + value.id + ')">Editar</button>';
+                            botaoDeletar = ' <button type="button" class="btn btn-danger" onclick="deletarIngresso(' + value.id + ')">Deletar</button>';
+
+                            $('#tbIngresso')
+                                .find('tbody')
+                                .append('<tr>')
+                                .append($('<td>').append(value.id))
+                                .append($('<td>').append(value.idFilme))
+                                .append($('<td>').append(value.idSala))
+                                .append($('<td>').append(value.valor))
+                                .append($('<td>').append(value.dataInicio))
+                                .append($('<td>').append(botaoEditar + botaoDeletar));
+                        });
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function adicionarIngresso() {
+            $('#divCadastro').removeClass('esconder');
+            $('#txtId').val('0');
+        }
+
+        function inserir() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                IdFilme: $('#cbEmpresa').val(),
+                IdSala: $('#cbSala').val(),
+                Valor: parseFloat($('#txtValor').val()),
+                DataInicio: Date($('#txtData').val())
+            };
+
+            $.ajax({
+                type: "POST",
+                url: url + 'ingresso',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        listarIngresso();
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function alterar() {
+            var obj = {
+                Id: parseInt($('#txtId').val()),
+                IdFilme: $('#cbEmpresa').val(),
+                IdSala: $('#cbSala').val(),
+                Valor: parseFloat($('#txtValor').val()),
+                DataInicio: Date($('#txtData').val())
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: url + 'ingresso',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(obj),
+                success: function (jsonResult) {
+                    if (jsonResult.status) {
+                        listarIngresso();
+                    }
+                },
+                failure: function (response) {
+                    alert("Erro ao carregar os dados: " + response);
+                }
+            });
+        }
+
+        function salvar() {
+            var id = $('#txtId').val();
+
+            if (id == '0') {
+                inserir();
+            } else {
+                alterar();
+            }
+        }
+
+        function fechar() {
+            $('#divCadastro').addClass('esconder');
+        }
+
+        $(function () {
+            listarIngresso();
+            carregarFilme();
+            carregarSala();
+
+            $('#btnInserir').click(function () { adicionarIngresso(); });
+            $('#btnSalvar').click(function () { salvar(); });
+        });
+    </script>
+}
